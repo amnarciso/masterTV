@@ -1,15 +1,13 @@
-const express = require('express')
-const app = express()
-const port = 3000
-
-app.get('/', (request, response) => {
-  response.send('Hello from Express!')
-})
-
-app.listen(port, (err) => {
-  if (err) {
-    return console.log('something bad happened', err)
-  }
-
-  console.log(`server is listening on ${port}`)
-})
+var express = require('express');
+var exphbs  = require('express-handlebars');
+ 
+var app = express();
+ 
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+ 
+app.get('/', function (req, res) {
+    res.render('home');
+});
+ 
+app.listen(3000);
