@@ -1,0 +1,70 @@
+{
+  "providers": [
+      {
+        "nome": "MasterTV",
+        "login_action": [
+            {
+              "action": "get",
+              "target": "http://mastertv.biz/entrar.htm"
+            },
+            {
+              "action": "login",
+              "target": "//input[@name='login']"
+            },
+            {
+              "action": "senha",
+              "target": "//input[@name='senha']"
+            },
+            {
+              "action": "click",
+              "target": "//input[@value='Continuar']"
+            }
+          ],
+        "menu": [
+            {
+              "nome": "750kbs",
+              "action" : [
+                  {
+                    "action": "switch",
+                    "target": "//iframe[@src='master.php']"
+                  },
+                  {
+                    "action": "click",
+                    "target": "//a[text()='Camais 750']"
+                  },
+                  {
+                    "action": "switch",
+                    "target": "//iframe[@src='frente.php']"
+                  },
+                  {
+                    "action": "click",
+                    "target": "//a[text()='CANAIS EM SERVIDORES NO BR']"
+                  }
+                ],
+              "label": {
+                "target": "//font[parent::td//a]",
+                "attribute": "innerText",
+                "regex": ".*"
+              },
+              "load": {
+                "action": "click",
+                "target": "//a[img]"
+              },
+              "play": [
+                  {
+                    "action": "popup"
+                  },
+                  {
+                    "action": "click",
+                    "target": "//div[@id='container']"
+                  },
+                  {
+                    "action": "click",
+                    "target": "//div[contains(@class, 'jw-icon-fullscreen')]"
+                  }
+                ]
+            }
+          ]
+      }
+    ]
+}

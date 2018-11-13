@@ -1,6 +1,4 @@
-var express = require('express');
-var exphbs  = require('express-handlebars');
- 
+//Start Browser
 var webdriver = require("selenium-webdriver"),
 	By = webdriver.By,
 	until = webdriver.until;
@@ -13,12 +11,46 @@ var chromeOptions = {
 var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
 driver.manage().window().setRect({x: 0, y: 10000, width: 640, height: 480});
 
+//Read providers config
+var fs = require("fs");
+var contents = fs.readFileSync("providers.json");
+var providers = JSON.parse(contents).providers;
+
+//Start handlebars app
+var express = require('express');
+var exphbs  = require('express-handlebars');
+
 var app = express();
- 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
  
 app.get('/', function (req, res) {
+	(async function() {
+	  try {
+		await driver.get('http://mastertv.biz/entrar.htm');
+		await driver.findElement(By.xpath('//input[@name="login"]')).sendKeys('amnarciso@gmail.com');
+		await driver.findElement(By.xpath('//input[@name="senha"]')).sendKeys('mypass');
+		await driver.findElement(By.xpath('//input[@value="Continuar"]')).click();
+
+	    await driver.switchTo().frame(driver.findElement(By.xpath('//iframe[@src="master.php"]')));
+	    await driver.findElement(By.xpath('//a[text()="Camais 750"]')).click();
+
+	    await driver.switchTo().frame(driver.findElement(By.xpath('//iframe[@src="frente.php"]')));
+	    await driver.findElement(By.xpath('//a[text()="CANAIS EM SERVIDORES NO BR"]')).click();
+
+
+	    let elements = await driver.findElements(By.xpath('//font[parent::td//a]'));
+		for(let elem of elements) {
+		    let text = await elem.getAttribute("innerText");
+		    console.log(text.trim());
+		}
+
+
+	  } finally {
+	  	//
+	  }
+	})();
+
     res.render('home');
 });
 
