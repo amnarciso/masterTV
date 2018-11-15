@@ -1,19 +1,30 @@
+{{#each providers as |provider|}}
 <nav class="navbar navbar-dark bg-dark">
-	<a class="navbar-brand" href="#" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01">MasterTV</a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	
-	<div class="collapse navbar-collapse" id="navbarsExample01">
-    	<ul class="navbar-nav mr-auto">
-      		<li class="nav-item dropdown">
-        		<a class="nav-link dropdown-toggle" href="https://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">750kbps</a>
-        		<div class="dropdown-menu" aria-labelledby="dropdown01">
-          			<a class="dropdown-item" href="#">Record News</a>
-          			<a class="dropdown-item" href="#">Band News</a>
-          			<a class="dropdown-item" href="#">Globo News</a>
-        		</div>
-      		</li>
-    	</ul>
-  	</div>
+  <a class="navbar-brand" href="#" data-toggle="collapse" data-target="#navbars{{provider.id}}" aria-controls="navbars{{provider.id}}">{{provider.name}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars{{provider.id}}" aria-controls="navbars{{provider.id}}" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  {{#each provider.menus as |menu|}}
+
+  <div class="collapse navbar-collapse" id="navbars{{provider.id}}">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="https://example.com" id="dropdown{{provider.id}}_{{menu.id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{menu.name}}</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown{{provider.id}}_{{menu.id}}">
+
+        {{#each menu.channels as |channel|}}
+
+          <a class="dropdown-item" href="/{{provider.id}}/{{menu.id}}/{{channel.id}}">{{channel.name}}</a>
+
+        {{/each}}
+
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  {{/each}}
+
 </nav>
+{{/each}}

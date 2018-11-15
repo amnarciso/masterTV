@@ -1,8 +1,8 @@
 {
   "providers": [
       {
-        "nome": "MasterTV",
-        "login_action": [
+        "name": "MasterTV",
+        "login": [
             {
               "action": "get",
               "target": "http://mastertv.biz/entrar.htm"
@@ -12,7 +12,7 @@
               "target": "//input[@name='login']"
             },
             {
-              "action": "senha",
+              "action": "password",
               "target": "//input[@name='senha']"
             },
             {
@@ -20,10 +20,10 @@
               "target": "//input[@value='Continuar']"
             }
           ],
-        "menu": [
+        "menus": [
             {
-              "nome": "750kbs",
-              "action" : [
+              "name": "750kbs",
+              "show" : [
                   {
                     "action": "switch",
                     "target": "//iframe[@src='master.php']"
