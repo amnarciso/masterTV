@@ -7,7 +7,7 @@ var chromeCapabilities = webdriver.Capabilities.chrome();
 var chromeOptions = {'args': ['--disable-infobars']};
 chromeCapabilities.set('chromeOptions', chromeOptions);
 var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
-driver.manage().window().setRect({x: 0, y: 0, width: 640, height: 480});
+driver.manage().window().setRect({x: 0, y: 1000, width: 640, height: 480});
 var browser = new Browser(driver);
 
 //Read providers config
@@ -22,8 +22,11 @@ var exphbs  = require('express-handlebars');
 var app = express();
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
+app.use(express.static('public'));
  
 (async function() {
+	browser.busy = true;
+
 	var p_id  = 0;
 	for (let provider of providers){
 		provider.id = p_id;
@@ -45,14 +48,26 @@ app.set('view engine', 'handlebars');
 		}
 	}
 
+	browser.busy = false;
 	})();
 
 app.get('/', function (req, res) {
+	if (browser.busy) {
+		res.render('busy');
+		return;
+	}
     res.render('home', {providers: providers});
 });
 
 app.get('/:p_id/:m_id/:c_id', function (req, res) {
+	if (browser.busy) {
+		res.render('busy');
+		return;
+	}
+
 	(async function() {
+		browser.busy = true;
+		await browser.reset();
 		for (let order of providers[req.params.p_id].login){
 			await browser.runAction(order.action, order.target);
 			await console.log(order.target);
@@ -66,14 +81,16 @@ app.get('/:p_id/:m_id/:c_id', function (req, res) {
 			await browser.runAction(order.action, order.target);
 			await console.log(order.target);
 		}
+		browser.busy = false;
 	})();
 
-    res.render('home', {providers: providers});
+	res.redirect('/');
 });
  
 app.listen(3000);
 
 function Browser(driver) {
+	this.busy = false;
 	this.runAction = async function(action, target, index = null){
 		switch (action) {
 			case 'get':
@@ -116,5 +133,15 @@ function Browser(driver) {
 		    await e_id ++;
 		}
 		return await elemList;
+	}
+
+	this.reset = async function(){
+		let handlePromise = await driver.getAllWindowHandles();
+		while (handlePromise.length > 1) {
+			await driver.switchTo().window(handlePromise[1]);
+			await driver.close();	
+			await driver.switchTo().window(handlePromise[0]);
+			handlePromise = await driver.getAllWindowHandles();
+		}
 	}
 }
